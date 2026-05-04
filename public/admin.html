@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin</title>
+
+<style>
+body{
+  background:#111;
+  color:#fff;
+  font-family:Arial;
+  padding:20px;
+}
+
+.card{
+  background:#1a1a1a;
+  margin-top:15px;
+  padding:10px;
+  border-radius:10px;
+}
+
+video{
+  width:200px;
+}
+
+button{
+  padding:5px;
+  margin-top:5px;
+  background:red;
+  border:none;
+  color:#fff;
+  cursor:pointer;
+}
+</style>
+
+</head>
+<body>
+
+<h2>Upload de Vídeo</h2>
+
+<input type="text" id="title" placeholder="Legenda"><br><br>
+<input type="file" id="file"><br><br>
+
+<button onclick="upload()">Enviar</button>
+
+<hr>
+
+<h2>Vídeos enviados</h2>
+<div id="lista"></div>
+
+<script>
+
+// 🔥 FUNÇÃO CORRIGIDA
+async function upload(){
+  const fileInput = document.getElementById('file');
+  const titleInput = document.getElementById('title');
+
+  const file = fileInput.files[0];
+  const title = titleInput.value.trim(); // 👈 GARANTE TEXTO
+
+  if(!file){
+    alert('Escolhe um vídeo');
+    return;
+  }
+
+  if(!title){
+    alert('Digite uma legenda');
+    return;
+  }
+
+  const fd = new FormData();
+  fd.append('video', file);
+  fd.append('title', title);
+
+  await fetch('/upload', {
+    method:'POST',
+    body: fd
+  });
+
+  alert('Enviado!');
+  location.reload();
+}
+
+// LISTAR VIDEOS
+async function load(){
+  const res = await fetch('/videos-feed');
+  const vids = await res.json();
+
+  const div = document.getElementById('lista');
+  div.innerHTML = '';
+
+  vids.forEach(v => {
+    div.innerHTML += `
+      <div class="card">
+        <video controls src="/videos/${v.file}"></video>
+        <p>${v.title}</p>
+        <button onclick="del('${v.id}')">🗑️ Deletar</button>
+      </div>
+    `;
+  });
+}
+
+// DELETE
+async function del(id){
+  await fetch('/delete/' + id, { method:'DELETE' });
+  load();
+}
+
+load();
+</script>
+
+</body>
+</html>
