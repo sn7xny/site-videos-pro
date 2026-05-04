@@ -18,5 +18,9 @@
   "bugs": {
     "url": "https://github.com/sn7xny/site-videos-pro/issues"
   },
-  "homepage": "https://github.com/sn7xny/site-videos-pro#readme"
+  "homepage": "https://github.com/sn7xny/site-videos-pro#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "multer": "^2.1.1"
+  }
 }
